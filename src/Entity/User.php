@@ -2,7 +2,13 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\GetCollection;
+use ApiPlatform\Metadata\Post;
+use App\Controller\UserCreateAction;
 use App\Repository\UserRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
@@ -12,10 +18,28 @@ use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ApiResource(
+    operations: [
+        new GetCollection(),
+        new Post(
+            uriTemplate: '/users/my',
+            controller: UserCreateAction::class,
+            name: 'userCreate',
+        ),
+        new Delete()
+    ],
     normalizationContext: ['groups' => ['user:read']],
     denormalizationContext: ['groups' => ['user:write']],
+    paginationItemsPerPage: 5
 )]
 #[UniqueEntity('email')]
+#[ApiFilter(
+    SearchFilter::class,
+    properties: [
+        'id' => 'exact',
+        'email' => 'partial',
+        'firstName' => 'start',
+    ]
+)]
 
 class User
 {
