@@ -6,8 +6,8 @@ namespace App\Controller;
 
 use ApiPlatform\Validator\ValidatorInterface;
 use App\Component\User\UserFactory;
+use App\Component\User\UserManager;
 use App\Entity\User;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class UserCreateAction extends AbstractController

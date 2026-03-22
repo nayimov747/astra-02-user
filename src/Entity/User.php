@@ -6,6 +6,7 @@ use ApiPlatform\Doctrine\Orm\Filter\SearchFilter;
 use ApiPlatform\Metadata\ApiFilter;
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Delete;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\UserCreateAction;
@@ -14,6 +15,7 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Attribute\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -27,6 +29,11 @@ use Symfony\Component\Validator\Constraints as Assert;
             validate: false,
             name: 'userCreate',
         ),
+        new Post(
+            uriTemplate: '/users/auth',
+            name: 'userAuth',
+        ),
+        new Get(),
         new Delete()
     ],
     normalizationContext: ['groups' => ['user:read']],
@@ -43,7 +50,7 @@ use Symfony\Component\Validator\Constraints as Assert;
     ]
 )]
 
-class User implements PasswordAuthenticatedUserInterface
+class User implements PasswordAuthenticatedUserInterface, UserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -152,7 +159,7 @@ class User implements PasswordAuthenticatedUserInterface
 
     public function getRoles(): array
     {
-        return $this->roles;
+        return ["ROLE_USER"];
     }
 
     public function setRoles(array $roles): static
@@ -172,5 +179,15 @@ class User implements PasswordAuthenticatedUserInterface
         $this->createdAt = $createdAt;
 
         return $this;
+    }
+
+    public function eraseCredentials(): void
+    {
+        // TODO: Implement eraseCredentials() method.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        return $this->getEmail();
     }
 }
