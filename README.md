@@ -1,1 +1,1 @@
-![App Screenshot](https://freeimage.host/i/image.Cob9uHu)
+![App Screenshot](https://i.postimg.cc/zBjYzwSS/image.png)
